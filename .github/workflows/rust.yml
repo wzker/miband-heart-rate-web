@@ -21,7 +21,7 @@ jobs:
     # - name: Run tests
     #   run: cargo test --verbose
     - name: 上传编译产物
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v2
       with:
           name: linux-build
           path: target/release/

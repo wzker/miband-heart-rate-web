@@ -107,14 +107,14 @@ pub async fn start_web_server(heart_rate_sender: HeartRateSender) -> Result<(), 
         .or(heartrate_api)
         .with(cors);
 
-    println!("心率监控后端API服务器启动在 http://localhost:3030");
+    println!("心率监控后端API服务器启动在 http://localhost:3040");
     println!("可用的API端点:");
-    println!("  - WebSocket连接: ws://localhost:3030/ws (实时心率数据)");
-    println!("  - 健康检查: http://localhost:3030/api/health");
-    println!("  - 当前心率: http://localhost:3030/api/heartrate");
+    println!("  - WebSocket连接: ws://localhost:3040/ws (实时心率数据)");
+    println!("  - 健康检查: http://localhost:3040/api/health");
+    println!("  - 当前心率: http://localhost:3040/api/heartrate");
     
     warp::serve(routes)
-        .run(([127, 0, 0, 1], 3030))
+        .run(([0, 0, 0, 0], 3040))
         .await;
 
     Ok(())

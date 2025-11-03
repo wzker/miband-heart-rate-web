@@ -101,7 +101,7 @@ pub async fn start_web_server(heart_rate_sender: HeartRateSender) -> Result<(), 
                 Ok::<_, warp::Rejection>(warp::reply::json(&heart_rate_data))
             }
         });
-    // 获取当前心率数据API
+    // 获取当前心率数据API_2
     let buffer_for_api_h2 = heart_rate_buffer.clone();
     let heartrate_api_h2 = warp::path("")
         .and(warp::path("heartrate"))
@@ -110,7 +110,7 @@ pub async fn start_web_server(heart_rate_sender: HeartRateSender) -> Result<(), 
             let buffer = buffer_for_api_h2.clone();
             async move {
                 let buffer_guard = buffer.lock().await;
-                let heart_rate_data = buffer_guard.current_heart_rate.unwrap_or(0);
+                let heart_rate_value = buffer_guard.current_heart_rate.unwrap_or(0);
                 Ok::<_, warp::Rejection>(warp::reply::html(heart_rate_value.to_string()))
             }
         });

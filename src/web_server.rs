@@ -101,20 +101,34 @@ pub async fn start_web_server(heart_rate_sender: HeartRateSender) -> Result<(), 
                 Ok::<_, warp::Rejection>(warp::reply::json(&heart_rate_data))
             }
         });
+    // 获取当前心率数据API
+    let buffer_for_api_h2 = heart_rate_buffer.clone();
+    let heartrate_api_h2 = warp::path("")
+        .and(warp::path("heartrate"))
+        .and(warp::path::end())
+        .and_then(move || {
+            let buffer = buffer_for_api_h2.clone();
+            async move {
+                let buffer_guard = buffer.lock().await;
+                let heart_rate_data = buffer_guard.current_heart_rate.unwrap_or(0);
+                Ok::<_, warp::Rejection>(warp::reply::html(heart_rate_value.to_string()))
+            }
+        });
 
     let routes = websocket
         .or(health_check)
         .or(heartrate_api)
+        .or(heartrate_api_h2)
         .with(cors);
 
-    println!("心率监控后端API服务器启动在 http://localhost:3040");
+    println!("心率监控后端API服务器启动在 http://localhost:3030");
     println!("可用的API端点:");
-    println!("  - WebSocket连接: ws://localhost:3040/ws (实时心率数据)");
-    println!("  - 健康检查: http://localhost:3040/api/health");
-    println!("  - 当前心率: http://localhost:3040/api/heartrate");
+    println!("  - WebSocket连接: ws://localhost:3030/ws (实时心率数据)");
+    println!("  - 健康检查: http://localhost:3030/api/health");
+    println!("  - 当前心率: http://localhost:3030/api/heartrate");
     
     warp::serve(routes)
-        .run(([0, 0, 0, 0], 3040))
+        .run(([0, 0, 0, 0], 3030))
         .await;
 
     Ok(())
